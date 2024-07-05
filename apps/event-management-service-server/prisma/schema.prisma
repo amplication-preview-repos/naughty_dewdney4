@@ -1,0 +1,61 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Event {
+  createdAt     DateTime       @default(now())
+  date          DateTime?
+  description   String?
+  id            String         @id @default(cuid())
+  location      String?
+  profile       Profile?       @relation(fields: [profileId], references: [id])
+  profileId     String?
+  title         String?
+  updatedAt     DateTime       @updatedAt
+  userInterests UserInterest[]
+}
+
+model Profile {
+  bio            String?
+  createdAt      DateTime                @default(now())
+  email          String?
+  events         Event[]
+  id             String                  @id @default(cuid())
+  name           String?
+  profilePicture Json?
+  profileType    EnumProfileProfileType?
+  updatedAt      DateTime                @updatedAt
+  userInterests  UserInterest[]
+  websiteLink    String?
+}
+
+model UserInterest {
+  createdAt DateTime @default(now())
+  event     Event?   @relation(fields: [eventId], references: [id])
+  eventId   String?
+  id        String   @id @default(cuid())
+  profile   Profile? @relation(fields: [profileId], references: [id])
+  profileId String?
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+enum EnumProfileProfileType {
+  Option1
+}
